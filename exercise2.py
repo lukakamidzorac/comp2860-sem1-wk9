@@ -37,7 +37,13 @@ class SAES_CBC:
             bytes: the ciphertext
         '''
         ciphertext = b''
-        #TODO: Your code should go here
+        prev = self.iv
+        for i in range(0, len(plaintext), self.blocksize):
+            block = plaintext[i:i + self.blocksize]
+            xored = strxor(block, prev)
+            enc = self.block_cipher.encrypt(xored)
+            ciphertext += enc
+            prev = enc  # next block is XORed with this ciphertext block
         return ciphertext
 
     def decrypt(self, ciphertext: bytes) -> bytes:
@@ -50,7 +56,12 @@ class SAES_CBC:
             bytes: the plaintext
         '''
         plaintext = b''
-        #TODO: Your code should go here
+        prev = self.iv
+        for i in range(0, len(ciphertext), self.blocksize):
+            block = ciphertext[i:i + self.blocksize]
+            dec = self.block_cipher.decrypt(block)
+            plaintext += strxor(dec, prev)
+            prev = block  # previous ciphertext block, not the decrypted one
         return plaintext
 
 if __name__ == '__main__':
